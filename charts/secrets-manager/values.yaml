@@ -1,0 +1,91 @@
+# Default values for secrets-manager.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: tuentitech/secrets-manager
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  # Just use the version, don't include the v -- it will be added automatically.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  # Set to create false if it already exists -- be sure to fill in the name field or an
+  # auto-generated SA name will be used which may not match your existing SA.
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+appRoleSecret:
+  # The Vault AppRole secret containing the role_id and secret_id
+  # Set to create false if it already exists -- be sure to fill in the name field or an
+  # auto-generated Secret name will be used which may not match your existing Secret.
+  create: true
+  annotations: {}
+  name: ""
+  # For security it is recommended to use Helm-Secrets or another encyption
+  # mechanism to store the roleId and secretId.
+  # Setup your Vault Policy (https://github.com/tuenti/secrets-manager#vault-policies) 
+  # and assoiciated AppRole to get the values for the role_id and secret_id:
+  # https://github.com/tuenti/secrets-manager#vault-approle
+  # If you are externally managing a pre-created secret then the following does not need
+  # to be set -- just set the Secret "name" field above.
+  data:
+    roleId: "your AppRole role id"
+    secretId: "your AppRole secret id"
+
+podAnnotations: {}
+
+vaultUrl: https://vault:8200
+debugEnabled: false
+# If this is a namespaced installation it will only reference the namespace the
+# operator is installed to.  If this is not enabled then it is cluster-scoped (i.e. all namespaces).
+namespaceScopeEnabled: false
+
+# For a vault instance using self-signed CA certificates we need to mount and use the CA cert.
+# This should be referenced from an existing secret which includes a PEM encoded cert file.
+# If the secret contains multiple secret keys (e.g. ca.key, server.crt, etc.) all will be mounted
+# as files in the pod but (for now) only the CA cert file will be mounted and referenced for Vault access.
+vaultTLS:
+  enabled: true
+  secretName: vault-tls
+  mountDirectory: /etc/vaultCerts
+  # The CA filename must match the Secret-key so we can set the VAULT_CACERT env variable.
+  caFilename: ca.crt
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

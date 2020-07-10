@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "secrets-manager.fullname" . }}
+  labels:
+    {{- include "secrets-manager.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "secrets-manager.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "secrets-manager.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "secrets-manager.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          args:
+          - -vault.url={{ .Values.vaultUrl }}
+          {{- if .Values.debugEnabled }}
+          - -enable-debug-log
+          {{- end }}
+          {{- if .Values.namespaceScopeEnabled }}
+          - -watch-namespaces={{ .Release.Namespace }}
+          - -controller-name={{ include "secrets-manager.fullname" . }}
+          {{- end }}
+          env:
+            - name: VAULT_ROLE_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "secrets-manager.appRoleSecret" . }}
+                  key: role_id
+            - name: VAULT_SECRET_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "secrets-manager.appRoleSecret" . }}
+                  key: secret_id
+            {{- if .Values.vaultTLS.enabled }}
+            - name: VAULT_CACERT
+              value: {{ .Values.vaultTLS.mountDirectory }}/{{ .Values.vaultTLS.caFilename }}
+            {{- end }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ include "secrets-manager.imageTag" . }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.vaultTLS.enabled }}
+          volumeMounts:
+            - name: vault-tls-certs
+              mountPath: {{ .Values.vaultTLS.mountDirectory }}
+              readOnly: true
+        {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      {{- if .Values.vaultTLS.enabled }}
+      volumes:
+        - name: vault-tls-certs
+          secret:
+            secretName: {{ .Values.vaultTLS.secretName }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
