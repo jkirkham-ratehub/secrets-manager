@@ -1,2 +1,27 @@
 Tuenti Secrets-Manager
 
+{{- if .Values.namespaceScopeEnabled }}
+This deployment is scoped to the Namespace {{ .Release.Namespace }}.
+{{- else }}
+This deployment is cluster-scoped and will watch for SecretDefinitions in all namespaces.
+{{- end }}
+
+You can map Vault secrets to Kubernetes Secrets as follows:
+apiVersion: secrets-manager.tuenti.io/v1alpha1
+kind: SecretDefinition
+metadata:
+  name: sample
+spec:
+  # Add fields here
+  name: sample-secrets
+  keysMap:
+    SECRET_KEY_!:
+      path: secret/data/project/secret
+      key: VAULT_SECRET_KEY_!
+    SECRET_KEY_2:
+      path: secret/data/project/secret
+      key: VAULT_SECRET_KEY_2
+
+This will create a Secret in the Kubernetes Namespace that the SecretDefinition is applied to.
+If the deployment is namespace scoped then it will only work in the same namespace this Chart was deployed to.
+The Vault secret path must be readable by the AppRole associated with the Chart deployment.
