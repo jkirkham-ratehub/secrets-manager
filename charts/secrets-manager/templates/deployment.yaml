@@ -34,7 +34,6 @@ spec:
           {{- end }}
           {{- if .Values.namespaceScopeEnabled }}
           - -watch-namespaces={{ .Release.Namespace }}
-          - -controller-name={{ include "secrets-manager.fullname" . }}
           {{- end }}
           env:
             - name: VAULT_ROLE_ID
