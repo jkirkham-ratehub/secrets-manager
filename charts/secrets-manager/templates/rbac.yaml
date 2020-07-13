@@ -1,4 +1,41 @@
 {{- if .Values.serviceAccount.create -}}
+{{- if .Values.namespaceScopeEnabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "secrets-manager.fullname" . }}
+  labels:
+    {{- include "secrets-manager.selectorLabels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - ""
+  - "secrets-manager.tuenti.io"
+  resources:
+  - "secrets"
+  - "secretdefinitions"
+  verbs:
+  - "get"
+  - "list"
+  - "watch"
+  - "update"
+  - "delete"
+  - "create"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "secrets-manager.fullname" . }}
+  labels:
+    {{- include "secrets-manager.selectorLabels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "secrets-manager.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "secrets-manager.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- else }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -34,4 +71,5 @@ subjects:
   - kind: ServiceAccount
     name: {{ include "secrets-manager.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
+{{- end }}
 {{- end }}
