@@ -50,6 +50,17 @@ debugEnabled: false
 # operator is installed to.  If this is not enabled then it is cluster-scoped (i.e. all namespaces).
 namespaceScopeEnabled: false
 
+## Uncomment and customise the following as needed.
+#metrics-addr: :8080
+#reconcile-period: 5s
+#config-backend-timeout: 5s
+#vault:
+#  engine: kv2
+#  approle-path: approle
+#  max-token-ttl: 300
+#  token-polling-period: 15s
+#  renew-ttl-increment: 600
+
 # For a vault instance using self-signed CA certificates we need to mount and use the CA cert.
 # This should be referenced from an existing secret which includes a PEM encoded cert file.
 # If the secret contains multiple secret keys (e.g. ca.key, server.crt, etc.) all will be mounted

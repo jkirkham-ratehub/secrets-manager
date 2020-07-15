@@ -35,6 +35,30 @@ spec:
           {{- if .Values.namespaceScopeEnabled }}
           - -watch-namespaces={{ .Release.Namespace }}
           {{- end }}
+          {{- if .Values.metrics-addr }}
+          - -metrics-addr={{ .Values.metrics-addr }}
+          {{- end }}
+          {{- if .Values.vault.max-token-ttl }}
+          - -vault.max-token-ttl={{ .Values.vault.max-token-ttl }}
+          {{- end }}
+          {{- if .Values.vault.token-polling-period }}
+          - -vault.token-polling-period={{ .Values.vault.token-polling-period }}
+          {{- end }}
+          {{- if .Values.vault.renew-ttl-increment }}
+          - -vault.renew-ttl-increment={{ .Values.vault.renew-ttl-increment }}
+          {{- end }}
+          {{- if .Values.vault.engine }}
+          - -vault.engine={{ .Values.vault.engine }}
+          {{- end }}
+          {{- if .Values.vault.approle-path }}
+          - -vault.approle-path={{ .Values.vault.approle-path }}
+          {{- end }}
+          {{- if .Values.reconcile-period }}
+          - -reconcile-period={{ .Values.reconcile-period }}
+          {{- end }}
+          {{- if .Values.config-backend-timeout }}
+          - -config.backend-timeout={{ .Values.config-backend-timeout }}
+          {{- end }}
           env:
             - name: VAULT_ROLE_ID
               valueFrom:

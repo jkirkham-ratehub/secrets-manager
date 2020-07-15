@@ -70,7 +70,6 @@ See the ReadMe for the Secrets-Manager repo for more details on using SecretDefi
 To-Do
 -----
 A number of features are not yet supported by this Helm chart but may be added in the future, as needed:
- - Not all command-line flags are supported yet.  In particular the metrics integration should be added soon, supporting *metrics-addr*.  Additionally, some fine-tuning features should be exposed through the values.yaml settings; e.g. *reconcile-period*, *config.backend-timeout*, *vault.engine*, *vault.approle-path*, *vault.max-token-ttl*, *vault.token-polling-period*, *vault.renew-ttl-increment*.
  - For Cluster-Scoped deployments we should add support for the *watch-namespaces* and *exclude-namespaces* settings.
  - Will we need to suuport *enable-leader-election*?  Can Secrets-Manager sun with `replicas` set to more than 1 (HA configuration)?
  - `controller-name` setting appears to be unsupported in v1.0.2 of Secrets-Manager.  This is ilkely not needed in Namespace-Scoped deployments unless we need to have multiple Secrets-Manager instances in the same Namespace or to avoid conflict between Cluster-Scoped and Namespace-Scoped deployments.  Perhaps the *exclude-namespaces* setting will be enough to avoid conflicts.
