@@ -79,3 +79,13 @@ Image tag must have a "v" pre-pended to it.
 {{- define "secrets-manager.imageTag" -}}
 {{ printf "v%s" (.Values.image.tag | default .Chart.AppVersion) }}
 {{- end }}
+
+{{/*
+A Helper Function to just a list of strings into a 
+single string with comma-separated values.
+https://github.com/openstack/openstack-helm-infra/blob/master/helm-toolkit/templates/utils/_joinListWithComma.tpl
+*/}}
+{{- define "secrets-manager.joinListWithComma" -}}
+{{- $local := dict "first" true -}}
+{{- range $k, $v := . -}}{{- if not $local.first -}},{{- end -}}{{- $v -}}{{- $_ := set $local "first" false -}}{{- end -}}
+{{- end -}}

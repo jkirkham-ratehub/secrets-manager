@@ -44,22 +44,36 @@ appRoleSecret:
 
 podAnnotations: {}
 
-vaultUrl: https://vault:8200
 debugEnabled: false
 # If this is a namespaced installation it will only reference the namespace the
 # operator is installed to.  If this is not enabled then it is cluster-scoped (i.e. all namespaces).
 namespaceScopeEnabled: false
 
+# For Cluster-Scoped deployments you may want to specify which namespaces to watch or to exclude.
+# Note: no validation is done to ensure these lists are mutually exclusive (which they should be).
+# If not enabled then this flag is not passed to the controlled.
+watchNamespaces:
+  enabled: false
+  namespaces:
+    - proj1
+    - proj2
+excludeNamespaces:
+  enabled: false
+  namespaces:
+    - kube-system
+    - default
+
 ## Uncomment and customise the following as needed.
-#metrics-addr: :8080
-#reconcile-period: 5s
-#config-backend-timeout: 5s
-#vault:
+#metricsAddress: :8080
+#reconcilePeriod: 5s
+#configBackendTimeout: 5s
+vault:
+  url: https://vault:8200
 #  engine: kv2
-#  approle-path: approle
-#  max-token-ttl: 300
-#  token-polling-period: 15s
-#  renew-ttl-increment: 600
+#  approlePath: approle
+#  maxTokenTtl: 300
+#  tokenPollingPeriod: 15s
+#  renewTtlIncrement: 600
 
 # For a vault instance using self-signed CA certificates we need to mount and use the CA cert.
 # This should be referenced from an existing secret which includes a PEM encoded cert file.

@@ -70,6 +70,7 @@ See the ReadMe for the Secrets-Manager repo for more details on using SecretDefi
 To-Do
 -----
 A number of features are not yet supported by this Helm chart but may be added in the future, as needed:
- - For Cluster-Scoped deployments we should add support for the *watch-namespaces* and *exclude-namespaces* settings.
  - Will we need to suuport *enable-leader-election*?  Can Secrets-Manager sun with `replicas` set to more than 1 (HA configuration)?
  - `controller-name` setting appears to be unsupported in v1.0.2 of Secrets-Manager.  This is ilkely not needed in Namespace-Scoped deployments unless we need to have multiple Secrets-Manager instances in the same Namespace or to avoid conflict between Cluster-Scoped and Namespace-Scoped deployments.  Perhaps the *exclude-namespaces* setting will be enough to avoid conflicts.
+
+ Note that some Helm templating features do not handle hyphen ("-") characters in settings names so the settings in values.yaml removes the hyphens but uses (camelCase) inter-capitalisation to preserve the words (e.g. `approle-path` becomes the setting `approlePath` in the values.yaml file).

@@ -28,36 +28,43 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           args:
-          - -vault.url={{ .Values.vaultUrl }}
+          - -vault.url={{ .Values.vault.url }}
           {{- if .Values.debugEnabled }}
           - -enable-debug-log
           {{- end }}
           {{- if .Values.namespaceScopeEnabled }}
           - -watch-namespaces={{ .Release.Namespace }}
+          {{- else }}
+          {{- if .Values.watchNamespaces.enabled }}
+          - -watch-namespaces={{ include "secrets-manager.joinListWithComma" .Values.watchNamespaces.namespaces }}
           {{- end }}
-          {{- if .Values.metrics-addr }}
-          - -metrics-addr={{ .Values.metrics-addr }}
+          {{- if .Values.excludeNamespaces.enabled }}
+          - -exclude-namespaces={{ include "secrets-manager.joinListWithComma" .Values.excludeNamespaces.namespaces }}
           {{- end }}
-          {{- if .Values.vault.max-token-ttl }}
-          - -vault.max-token-ttl={{ .Values.vault.max-token-ttl }}
           {{- end }}
-          {{- if .Values.vault.token-polling-period }}
-          - -vault.token-polling-period={{ .Values.vault.token-polling-period }}
+          {{- if .Values.metricsAddress }}
+          - -metrics-addr={{ .Values.metricsAddress }}
           {{- end }}
-          {{- if .Values.vault.renew-ttl-increment }}
-          - -vault.renew-ttl-increment={{ .Values.vault.renew-ttl-increment }}
+          {{- if .Values.reconcilePeriod }}
+          - -reconcile-period={{ .Values.reconcilePeriod }}
+          {{- end }}
+          {{- if .Values.configBackendTimeout }}
+          - -config.backend-timeout={{ .Values.configBackendTimeout }}
+          {{- end }}
+          {{- if .Values.vault.maxTokenTtl }}
+          - -vault.max-token-ttl={{ .Values.vault.maxTokenTtl }}
+          {{- end }}
+          {{- if .Values.vault.tokenPollingPeriod }}
+          - -vault.token-polling-period={{ .Values.vault.tokenPollingPeriod }}
+          {{- end }}
+          {{- if .Values.vault.renewTtlIncrement }}
+          - -vault.renew-ttl-increment={{ .Values.vault.renewTtlIncrement }}
           {{- end }}
           {{- if .Values.vault.engine }}
           - -vault.engine={{ .Values.vault.engine }}
           {{- end }}
-          {{- if .Values.vault.approle-path }}
-          - -vault.approle-path={{ .Values.vault.approle-path }}
-          {{- end }}
-          {{- if .Values.reconcile-period }}
-          - -reconcile-period={{ .Values.reconcile-period }}
-          {{- end }}
-          {{- if .Values.config-backend-timeout }}
-          - -config.backend-timeout={{ .Values.config-backend-timeout }}
+          {{- if .Values.vault.approlePath }}
+          - -vault.approle-path={{ .Values.vault.approlePath }}
           {{- end }}
           env:
             - name: VAULT_ROLE_ID
