@@ -51,17 +51,18 @@ namespaceScopeEnabled: false
 
 # For Cluster-Scoped deployments you may want to specify which namespaces to watch or to exclude.
 # Note: no validation is done to ensure these lists are mutually exclusive (which they should be).
-# If not enabled then this flag is not passed to the controlled.
+# If not enabled then this flag is not passed to the controller.
+# Remove the "[]" then uncomment and change the listed namespaces as needed.
 watchNamespaces:
   enabled: false
-  namespaces:
-    - proj1
-    - proj2
+  namespaces: []
+#    - proj1
+#    - proj2
 excludeNamespaces:
   enabled: false
-  namespaces:
-    - kube-system
-    - default
+  namespaces: []
+ #   - kube-system
+ #   - default
 
 ## Uncomment and customise the following as needed.
 #metricsAddress: :8080
