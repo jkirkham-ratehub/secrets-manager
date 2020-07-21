@@ -48,8 +48,8 @@ vault write auth/approle/role/${PROJECT}-secrets-manager policies=${PROJECT}-pol
 ```
 4. Retrieve the AppRole *role_id* and *secret_id* (this uses *jq* to parse out the values we need: https://stedolan.github.io/jq/):
 ```
-export PROJECT_SECRET_ID=$(vault write -force auth/approle/role/${PROJECT}-secrets-manager/secret-id -format=json | jq '.data.secret_id')
-export PROJECT_ROLE_ID=$(vault read auth/approle/role/${PROJECT}-secrets-manager/role-id -format=json | jq '.data.role_id')
+export PROJECT_SECRET_ID=$(vault write -force auth/approle/role/${PROJECT}-secrets-manager/secret-id -format=json | jq '.data.secret_id' | tr -d '"')
+export PROJECT_ROLE_ID=$(vault read auth/approle/role/${PROJECT}-secrets-manager/role-id -format=json | jq '.data.role_id' | tr -d '"')
 ```
 5. Although the Chart supports generating the AppRole Secret from settings in the values.yaml file, it is more secure to manually create the Secret and reference it by name in the values.yaml file.  For example in a namespace-scoped deployment wih Namespace *my-project* (using the variables set in the previous step):
 ```
