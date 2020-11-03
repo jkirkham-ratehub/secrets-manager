@@ -53,9 +53,11 @@ export PROJECT_ROLE_ID=$(vault read auth/approle/role/${PROJECT}/role-id -format
 ```
 5. Although the Chart supports generating the AppRole Secret from settings in the values.yaml file, it is more secure to manually create the Secret and reference it by name in the values.yaml file.  For example in a namespace-scoped deployment wih Namespace *my-project* (using the variables set in the previous step):
 ```
-kubectl create secret generic ${PROJECT}-approle-secret --from-literal role_id=$PROJECT_ROLE_ID  --from-literal secret_id=$PROJECT_SECRET_ID --namespace ${PROJECT}
+kubectl create secret generic ${PROJECT}-approle-secret --from-literal role_id=$PROJECT_ROLE_ID  --from-literal secret_id=$PROJECT_SECRET_ID --namespace ${PROJECT} --dry-run=client --output=yaml > ./${PROJECT}-approle-secret.yaml
+kubectl apply -f ./${PROJECT}-approle-secret.yaml -n $PROJECT
 ```
-and add this secret name to your values.yaml file under `appRoleSecret.name`.  Note that if you are doing this you must set `appRoleSecret.create` to `false` so the Helm deployment does not overwrite the secret your just created.  Alternatively, you can set your `role_id` and `secret_id` in your values.yaml file and have Helm manage the secret, though when you check in your values.yaml file this will potentially expose these values and weaken security.
+and add this secret name to your values.yaml file under `appRoleSecret.name`.  Note that if you are doing this you must set `appRoleSecret.create` to `false` so the Helm deployment does not overwrite the secret your just created.  In this example we save the YAML to a file before applying it.  This will allow us to save this as a backup, for example, by encrypting it with SOPS and committing it to a Git repo.
+Alternatively, you can set your `role_id` and `secret_id` in your values.yaml file and have Helm manage the secret, though when you check in your values.yaml file this will potentially expose these values and weaken security.
 
 6. Install the Chart using your completed values.yaml file.  For example:
 ```
