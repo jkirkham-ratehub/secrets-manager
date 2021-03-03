@@ -74,9 +74,9 @@ spec:
           {{- else if .Values.kubernetesAuth.enabled }}
           - -vault.auth-method=kubernetes
           - -vault.kubernetes-role={{ include "secrets-manager.kubernetesRoleName" . }}
-          {{- else -}}
+          {{- else }}
           - -vault.auth-method=approle
-          {{- end -}} }}
+          {{- end }}
           env:
             {{- if .Values.appRoleSecret.enabled }}
             - name: VAULT_ROLE_ID

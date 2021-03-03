@@ -78,9 +78,9 @@ Kubernetes Auth Role Name
 */}}
 {{- define "secrets-manager.kubernetesRoleName" -}}
 {{- if .Values.kubernetesAuth.roleName }}
-{{- default .Values.kubernetesAuth.roleName (include "secrets-manager.serviceAccountName" .) }}
+{{- .Values.kubernetesAuth.roleName }}
 {{- else }}
-{{- default "default" .Values.kubernetesAuth.roleName }}
+{{- include "secrets-manager.serviceAccountName" . }}
 {{- end }}
 {{- end }}
 
