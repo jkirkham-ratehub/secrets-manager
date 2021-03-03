@@ -66,7 +66,19 @@ spec:
           {{- if .Values.vault.approlePath }}
           - -vault.approle-path={{ .Values.vault.approlePath }}
           {{- end }}
+          {{- if .Values.vault.kubernetesPath }}
+          - -vault.approle-path={{ .Values.vault.kubernetesPath }}
+          {{- end }}
+          {{- if .Values.appRoleSecret.enabled }}
+          - -vault.auth-method=approle
+          {{- else if .Values.kubernetesAuth.enabled }}
+          - -vault.auth-method=kubernetes
+          - -vault.kubernetes-role={{ include "secrets-manager.kubernetesRoleName" . }}
+          {{- else -}}
+          - -vault.auth-method=approle
+          {{- end -}} }}
           env:
+            {{- if .Values.appRoleSecret.enabled }}
             - name: VAULT_ROLE_ID
               valueFrom:
                 secretKeyRef:
@@ -77,6 +89,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "secrets-manager.appRoleSecret" . }}
                   key: secret_id
+            {{- end }}
             {{- if .Values.vaultTLS.enabled }}
             - name: VAULT_CACERT
               value: {{ .Values.vaultTLS.mountDirectory }}/{{ .Values.vaultTLS.caFilename }}

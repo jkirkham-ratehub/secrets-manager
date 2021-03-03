@@ -21,10 +21,12 @@ serviceAccount:
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # If not set and create is true, a name is generated using the fullname template.
+  # The default name would be of the form "<helm-release-name>-secrets-manager"
   name: ""
 
 appRoleSecret:
+  enabled: true
   # The Vault AppRole secret containing the role_id and secret_id
   # Set to create false if it already exists -- be sure to fill in the name field or an
   # auto-generated Secret name will be used which may not match your existing Secret.
@@ -41,6 +43,15 @@ appRoleSecret:
   data:
     roleId: "your AppRole role id"
     secretId: "your AppRole secret id"
+
+kubernetesAuth:
+  enabled: false
+  # Specify the service-account name to use in the target namespace.
+  # If not specified then the name of ServiceAccount created by the chart
+  # for the Secrets-Manager instance will be used.  You will need to configure your
+  # Vault instance with the role mapped to the ServiceAccount and Namepsace before
+  # deploying Secrets-Manager.
+  roleName: ''
 
 podAnnotations: {}
 
@@ -72,6 +83,7 @@ vault:
   url: https://vault:8200
 #  engine: kv2
 #  approlePath: approle
+#  kubernetesPath: kubernetes
 #  maxTokenTtl: 300
 #  tokenPollingPeriod: 15s
 #  renewTtlIncrement: 600

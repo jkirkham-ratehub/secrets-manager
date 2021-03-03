@@ -74,6 +74,17 @@ AppRole Secret name.
 {{- end }}
 
 {{/*
+Kubernetes Auth Role Name
+*/}}
+{{- define "secrets-manager.kubernetesRoleName" -}}
+{{- if .Values.kubernetesAuth.roleName }}
+{{- default .Values.kubernetesAuth.roleName (include "secrets-manager.serviceAccountName" .) }}
+{{- else }}
+{{- default "default" .Values.kubernetesAuth.roleName }}
+{{- end }}
+{{- end }}
+
+{{/*
 Image tag must have a "v" pre-pended to it.
 */}}
 {{- define "secrets-manager.imageTag" -}}
